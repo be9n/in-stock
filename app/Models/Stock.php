@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Clients\ClientFactory;
 use App\Events\NowInStock;
+use App\UseCases\StockTrack;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,20 +22,23 @@ class Stock extends Model
 
     public function track($callback = null)
     {
-        $status = $this->retailer
-            ->client()
-            ->checkAvailability($this);
 
-        if (!$this->in_stock && $status->available) {
-            event(new NowInStock($this));
-        }
+        (new StockTrack($this))->handle();
 
-        $this->update([
-            'in_stock' => $status->available,
-            'price' => $status->price,
-        ]);
+        // $status = $this->retailer
+        //     ->client()
+        //     ->checkAvailability($this);
 
-        $callback && $callback($this);
+        // if (!$this->in_stock && $status->available) {
+        //     event(new NowInStock($this));
+        // }
+
+        // $this->update([
+        //     'in_stock' => $status->available,
+        //     'price' => $status->price,
+        // ]);
+
+        // $callback && $callback($this);
     }
 
     public function retailer(): BelongsTo

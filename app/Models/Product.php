@@ -24,9 +24,7 @@ class Product extends Model
 
     public function track()
     {
-        $this->stocks->each->track(
-            fn(Stock $stock) => $this->recordHistory($stock)
-        );
+        $this->stocks->each->track();
     }
 
     public function recordHistory(Stock $stock): void
